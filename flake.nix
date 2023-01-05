@@ -71,6 +71,57 @@
   outputs = { self, nixpkgs, flake-utils, ... }@inputs:
     flake-utils.lib.eachDefaultSystem (system:
       let
+
+        # couldn't find buildGrammar fn ini nixpkgs, so I copied it here, but
+        # it doesn't seem to show up in :TSInstallInfo, so I don't think it
+        # installed properly
+        myTsJust =
+          let
+            generate = true;
+            location = null;
+          in
+          pkgs.stdenv.mkDerivation ({
+            name = "just-grammar";
+            pname = "just-grammar";
+            src = pkgs.fetchFromGitHub {
+              owner = "IndianBoy42";
+              repo = "tree-sitter-just";
+              rev = "8af0aab79854aaf25b620a52c39485849922f766";
+              hash = "sha256-hYKFidN3LHJg2NLM1EiJFki+0nqi1URnoLLPknUbFJY=";
+            };
+            nativeBuildInputs = pkgs.lib.optionals generate [ pkgs.nodejs pkgs.tree-sitter ];
+            CFLAGS = [ "-Isrc" "-O2" ];
+            CXXFLAGS = [ "-Isrc" "-O2" ];
+            stripDebugList = [ "parser" ];
+            configurePhase = pkgs.lib.optionalString generate ''
+              tree-sitter generate
+            '' + pkgs.lib.optionalString (location != null) ''
+              cd ${location}
+            '';
+            # When both scanner.{c,cc} exist, we should not link both since they may be the same but in
+            # different languages. Just randomly prefer C++ if that happens.
+            buildPhase = ''
+              runHook preBuild
+              if [[ -e src/scanner.cc ]]; then
+                $CXX -fPIC -c src/scanner.cc -o scanner.o $CXXFLAGS
+              elif [[ -e src/scanner.c ]]; then
+                $CC -fPIC -c src/scanner.c -o scanner.o $CFLAGS
+              fi
+              $CC -fPIC -c src/parser.c -o parser.o $CFLAGS
+              $CXX -shared -o parser *.o
+              runHook postBuild
+            '';
+            installPhase = ''
+              runHook preInstall
+              mkdir $out
+              mv parser $out/
+              if [[ -d queries ]]; then
+                cp -r queries $out
+              fi
+              runHook postInstall
+            '';
+          });
+
         # Once we add this overlay to our nixpkgs, we are able to
         # use `pkgs.neovimPlugins`, which is a map of our plugins.
         # Each input in the format:
@@ -146,7 +197,9 @@
             jsonc-vim
             splitjoin-vim
 
-            (nvim-treesitter.withPlugins (plugins: pkgs.tree-sitter.allGrammars))
+            (nvim-treesitter.withPlugins (plugins: pkgs.tree-sitter.allGrammars ++ [
+              myTsJust
+            ]))
             nvim-treesitter-textobjects
             nvim-ts-autotag
             playground # tree-sitter playground
