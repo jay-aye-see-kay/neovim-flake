@@ -37,3 +37,4 @@ outputs = {self, nixpkgs, ...}@attr: {
     }
 }
 ```
+\n
