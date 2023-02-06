@@ -248,9 +248,16 @@ require("yop").op_map({ "n", "v" }, ",s", function(lines, opts)
 	end
 end)
 
+local ns = vim.api.nvim_create_namespace("_cfg_namespace")
 -- copy to system clipboard
-require("yop").op_map({ "n", "v" }, ",c", function(lines)
+require("yop").op_map({ "n", "v" }, ",c", function(lines, opts)
 	vim.fn.setreg("+", lines)
+	local start = { opts.position.first[1] - 1, opts.position.first[2] - 1 }
+	local finish = { opts.position.last[1] - 1, opts.position.last[2] }
+	vim.highlight.range(0, ns, "IncSearch", start, finish, {})
+	vim.defer_fn(function()
+		vim.api.nvim_buf_clear_namespace(0, ns, start[1], finish[1] + 1)
+	end, 1000)
 	print("Copied " .. #lines .. " lines to system clipboard")
 end)
 -- }}}
