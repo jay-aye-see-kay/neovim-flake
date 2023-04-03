@@ -63,6 +63,10 @@
       url = "github:jay-aye-see-kay/chatbot-buffer.nvim";
       flake = false;
     };
+    "plugin:github-nvim-theme" = {
+      url = "github:projekt0n/github-nvim-theme/0.0.x";
+      flake = false;
+    };
   };
 
   outputs = { self, nixpkgs, flake-utils, ... }@inputs:

@@ -128,6 +128,23 @@
         "type": "github"
       }
     },
+    "plugin:github-nvim-theme": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1676630209,
+        "narHash": "sha256-KGG/hSH6tvwj9HsZ9cjK6XNbei3vua25+GnLF116Yv4=",
+        "owner": "projekt0n",
+        "repo": "github-nvim-theme",
+        "rev": "e21282d37eef01c8ebce0b42c76750bda4396163",
+        "type": "github"
+      },
+      "original": {
+        "owner": "projekt0n",
+        "ref": "0.0.x",
+        "repo": "github-nvim-theme",
+        "type": "github"
+      }
+    },
     "plugin:mini-nvim": {
       "flake": false,
       "locked": {
@@ -266,6 +283,7 @@
         "plugin:codegpt-nvim": "plugin:codegpt-nvim",
         "plugin:debugprint": "plugin:debugprint",
         "plugin:git-conflict-nvim": "plugin:git-conflict-nvim",
+        "plugin:github-nvim-theme": "plugin:github-nvim-theme",
         "plugin:mini-nvim": "plugin:mini-nvim",
         "plugin:mkdnflow": "plugin:mkdnflow",
         "plugin:nvim-unception": "plugin:nvim-unception",
