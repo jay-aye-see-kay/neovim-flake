@@ -3,6 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nickel.url = "github:tweag/nickel";
     flake-utils.url = "github:numtide/flake-utils";
 
     # Plugins direct from their repos
@@ -110,6 +111,7 @@
           inherit system;
           overlays = [
             pluginOverlay
+            (final: prev: { inherit (inputs.nickel.packages.${system}) nickel lsp-nls; })
           ];
         };
 
@@ -150,6 +152,7 @@
             vim-json
             jsonc-vim
             vim-caddyfile
+            vim-nickel
 
             (nvim-treesitter.withPlugins (_: nvim-treesitter.allGrammars ++ [
               (pkgs.tree-sitter.buildGrammar {
@@ -243,6 +246,8 @@
           shellcheck
           statix
           sumneko-lua-language-server
+          nickel
+          lsp-nls
 
           # Formatters
           black
