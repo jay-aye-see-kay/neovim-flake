@@ -163,6 +163,38 @@
         "type": "github"
       }
     },
+    "plugin:otter-nvim": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1685279768,
+        "narHash": "sha256-jv7ZjTPjtyKIy4xxrqIof+lZ5JxZQMFAc4xQF4RGAs4=",
+        "owner": "jmbuhr",
+        "repo": "otter.nvim",
+        "rev": "5bfc1f5ab9cd19647dc7a919694fab7c1cfe0ccb",
+        "type": "github"
+      },
+      "original": {
+        "owner": "jmbuhr",
+        "repo": "otter.nvim",
+        "type": "github"
+      }
+    },
+    "plugin:quarto-nvim": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1685108889,
+        "narHash": "sha256-anIEUrQUv19uERwamR+oL1Ei2+jZPliii01rj8Ezt1o=",
+        "owner": "quarto-dev",
+        "repo": "quarto-nvim",
+        "rev": "de07dac68bf32f95de16e50f99b8cfce9098ae93",
+        "type": "github"
+      },
+      "original": {
+        "owner": "quarto-dev",
+        "repo": "quarto-nvim",
+        "type": "github"
+      }
+    },
     "plugin:tsnode-marker-nvim": {
       "flake": false,
       "locked": {
@@ -255,6 +287,8 @@
         "plugin:mini-nvim": "plugin:mini-nvim",
         "plugin:mkdnflow": "plugin:mkdnflow",
         "plugin:nvim-unception": "plugin:nvim-unception",
+        "plugin:otter-nvim": "plugin:otter-nvim",
+        "plugin:quarto-nvim": "plugin:quarto-nvim",
         "plugin:tsnode-marker-nvim": "plugin:tsnode-marker-nvim",
         "plugin:typescript-nvim": "plugin:typescript-nvim",
         "plugin:vim-just": "plugin:vim-just",

@@ -176,6 +176,7 @@ cmp.setup({
 	}),
 	sources = cmp.config.sources({
 		{ name = "nvim_lsp" },
+		{ name = "otter" },
 		{ name = "luasnip" },
 		{ name = "nvim_lua" },
 	}, {

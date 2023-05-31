@@ -151,3 +151,7 @@ vim.keymap.set(
 	{ desc = "list incomplete items in notes" }
 )
 vim.keymap.set("n", "<leader>nI", "<CMD>TodoTrouble cwd=~/notes keywords=IDEA<CR>", { desc = "list *ideas* in notes" })
+
+local quarto = require("quarto")
+quarto.setup()
+vim.keymap.set("n", "<leader>qp", quarto.quartoPreview, { desc = "Quarto Preview" })

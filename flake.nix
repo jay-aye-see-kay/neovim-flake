@@ -59,6 +59,14 @@
       url = "github:jay-aye-see-kay/chatbot-buffer.nvim";
       flake = false;
     };
+    "plugin:quarto-nvim" = {
+      url = "github:quarto-dev/quarto-nvim";
+      flake = false;
+    };
+    "plugin:otter-nvim" = {
+      url = "github:jmbuhr/otter.nvim";
+      flake = false;
+    };
   };
 
   outputs = { self, nixpkgs, flake-utils, ... }@inputs:
