@@ -105,117 +105,129 @@
           ];
         };
 
-        allPluginsFromInputs = pkgs.lib.attrsets.mapAttrsToList (name: value: value) pkgs.neovimPlugins;
+        pluginsFromInputs = pkgs.lib.attrsets.mapAttrsToList (name: value: value) pkgs.neovimPlugins;
+
+        pluginsFromNixpkgs = with pkgs.vimPlugins; [
+          # { plugin = impatient-nvim; config = "lua require('impatient')"; }
+          catppuccin-nvim
+          nvim-unception
+
+          # dependencies
+          plenary-nvim
+          popup-nvim
+          nui-nvim
+          nvim-web-devicons
+          dressing-nvim
+          vim-repeat
+
+          nvim-dap
+          nvim-dap-ui
+          nvim-dap-virtual-text
+          nvim-dap-go
+          nvim-dap-python
+
+          # langs
+          vim-nix
+          vim-json
+          jsonc-vim
+          vim-caddyfile
+          vim-just
+
+          (nvim-treesitter.withPlugins (_: nvim-treesitter.allGrammars ++ [
+            (pkgs.tree-sitter.buildGrammar {
+              language = "just";
+              version = "8af0aab";
+              src = pkgs.fetchFromGitHub {
+                owner = "IndianBoy42";
+                repo = "tree-sitter-just";
+                rev = "8af0aab79854aaf25b620a52c39485849922f766";
+                sha256 = "sha256-hYKFidN3LHJg2NLM1EiJFki+0nqi1URnoLLPknUbFJY=";
+              };
+            })
+          ]))
+          nvim-treesitter-textobjects
+          nvim-ts-autotag
+          playground # tree-sitter playground
+
+          # comments
+          # { plugin = comment-nvim; config = "lua require('Comment').setup()"; }
+          # { plugin = nvim-ts-context-commentstring; config = "lua vim.g.skip_ts_context_commentstring_module = true"; }
+
+          # lsp stuff
+          nvim-lspconfig
+          SchemaStore-nvim
+          nvim-cmp
+          cmp-buffer
+          cmp-path
+          cmp-nvim-lua
+          cmp-nvim-lsp
+          cmp_luasnip
+          lspkind-nvim
+          luasnip
+          nvim-autopairs
+          # { plugin = goto-preview; config = "lua require('goto-preview').setup({ default_mappings = true })"; }
+          null-ls-nvim
+          friendly-snippets
+          todo-comments-nvim
+          mkdnflow-nvim
+          hover-nvim
+
+          lualine-nvim
+          lualine-lsp-progress # switch back to fidget?
+          nvim-navic
+          neo-tree-nvim
+          refactoring-nvim
+
+          hydra-nvim
+          markdown-preview-nvim
+          vim-bbye
+          trouble-nvim
+
+          telescope-nvim
+          telescope-fzf-native-nvim
+          telescope-zoxide
+          telescope-undo-nvim
+          telescope-live-grep-args-nvim
+
+          nvim-colorizer-lua
+          vim-mundo
+          which-key-nvim
+          neodev-nvim
+
+          # { plugin = nvim-surround; config = "lua require('nvim-surround').setup()"; }
+          text-case-nvim
+
+          # git
+          diffview-nvim
+          vim-fugitive
+          vim-rhubarb
+          gitsigns-nvim
+          neogit
+        ];
+
+        allPlugins = pluginsFromInputs ++ pluginsFromNixpkgs;
 
         customConfig = pkgs.neovimUtils.makeNeovimConfig {
           withPython3 = true;
           extraPython3Packages = p: [ p.debugpy ];
           withNodeJs = true;
-          customRC = ''
-            lua << EOF
-              vim.opt.rtp:prepend("${./config}")
-              vim.opt.packpath = vim.opt.rtp:get()
-              require("_cfg")
-            EOF
+          luaRcContent = ''
+            -- load lazy.nvim
+            vim.opt.rtp:prepend("${./generated}")
+            vim.opt.rtp:prepend("${pkgs.vimPlugins.lazy-nvim}")
+
+            -- load plugin config
+            my_cfg_dir = "${./config}"
+            ${builtins.readFile ./plugins.lua}
+
+            -- load my config
+            require("_cfg")
           '';
-          plugins = allPluginsFromInputs ++ (with pkgs.vimPlugins; [
-            { plugin = impatient-nvim; config = "lua require('impatient')"; }
-            catppuccin-nvim
-            nvim-unception
-
-            # dependencies
-            plenary-nvim
-            popup-nvim
-            nui-nvim
-            nvim-web-devicons
-            dressing-nvim
-            vim-repeat
-
-            nvim-dap
-            nvim-dap-ui
-            nvim-dap-virtual-text
-            nvim-dap-go
-            nvim-dap-python
-
-            # langs
-            vim-nix
-            vim-json
-            jsonc-vim
-            vim-caddyfile
-            vim-just
-
-            (nvim-treesitter.withPlugins (_: nvim-treesitter.allGrammars ++ [
-              (pkgs.tree-sitter.buildGrammar {
-                language = "just";
-                version = "8af0aab";
-                src = pkgs.fetchFromGitHub {
-                  owner = "IndianBoy42";
-                  repo = "tree-sitter-just";
-                  rev = "8af0aab79854aaf25b620a52c39485849922f766";
-                  sha256 = "sha256-hYKFidN3LHJg2NLM1EiJFki+0nqi1URnoLLPknUbFJY=";
-                };
-              })
-            ]))
-            nvim-treesitter-textobjects
-            nvim-ts-autotag
-            playground # tree-sitter playground
-
-            # comments
-            { plugin = comment-nvim; config = "lua require('Comment').setup()"; }
-            { plugin = nvim-ts-context-commentstring; config = "lua vim.g.skip_ts_context_commentstring_module = true"; }
-
-            # lsp stuff
-            nvim-lspconfig
-            SchemaStore-nvim
-            nvim-cmp
-            cmp-buffer
-            cmp-path
-            cmp-nvim-lua
-            cmp-nvim-lsp
-            cmp_luasnip
-            lspkind-nvim
-            luasnip
-            nvim-autopairs
-            { plugin = goto-preview; config = "lua require('goto-preview').setup({ default_mappings = true })"; }
-            null-ls-nvim
-            friendly-snippets
-            todo-comments-nvim
-            mkdnflow-nvim
-            hover-nvim
-
-            lualine-nvim
-            lualine-lsp-progress # switch back to fidget?
-            nvim-navic
-            neo-tree-nvim
-            refactoring-nvim
-
-            hydra-nvim
-            markdown-preview-nvim
-            vim-bbye
-            trouble-nvim
-
-            telescope-nvim
-            telescope-fzf-native-nvim
-            telescope-zoxide
-            telescope-undo-nvim
-            telescope-live-grep-args-nvim
-
-            nvim-colorizer-lua
-            vim-mundo
-            which-key-nvim
-            neodev-nvim
-
-            { plugin = nvim-surround; config = "lua require('nvim-surround').setup()"; }
-            text-case-nvim
-
-            # git
-            diffview-nvim
-            vim-fugitive
-            vim-rhubarb
-            gitsigns-nvim
-            neogit
-          ]);
+          # plugins = allPlugins;
         };
+
+        # force plugins into the store, even though we don't use them this way
+        keepPluginsPath = pkgs.lib.makeBinPath allPlugins;
 
         # Extra packages made available to nvim but not the system
         # system packages take precedence over these
@@ -263,8 +275,13 @@
       in
       rec {
         packages.nvim = pkgs.wrapNeovimUnstable pkgs.neovim-unwrapped (customConfig // {
-          wrapperArgs = customConfig.wrapperArgs ++ [ "--suffix" "PATH" ":" extraPkgsPath ];
+          wrapperArgs = customConfig.wrapperArgs
+            ++ [ "--suffix" "PATH" ":" extraPkgsPath ]
+            ++ [ "--set" "NIX_NVIM_PLUGINS" keepPluginsPath ];
         });
+        packages.pluginsFromNixpkgs = pluginsFromNixpkgs;
+        packages.pluginsFromInputs = pluginsFromInputs;
+        packages.allPlugins = allPlugins;
         defaultPackage = packages.nvim;
         apps.nvim = { type = "app"; program = "${defaultPackage}/bin/nvim"; };
         apps.default = apps.nvim;
